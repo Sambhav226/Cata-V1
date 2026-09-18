@@ -1,0 +1,11 @@
+services:
+  coder:
+    build: .
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - CODER_MODEL=${CODER_MODEL:-claude-sonnet-4-5}
+    # `docker compose up` alone runs a smoke pass over the bundled sample
+    # notes so a clean clone has a working default. For real input, use
+    # ./run.sh <input-path> [output-path], which mounts your file in and
+    # overrides this command — see README.
+    command: ["--input", "tests/fixtures/sample_notes.jsonl", "--output", "/app/output.jsonl"]
