@@ -11,6 +11,7 @@ from typing import Optional
 class NoteInput:
     note_id: str
     text: str
+    load_error: Optional[str] = None
 
 
 @dataclass
@@ -74,6 +75,7 @@ class ConflictFinding:
     guideline_ids: list[str]
     resolved: bool
     resolution: Optional[str]
+    affected_codes: list[str] = field(default_factory=list)
 
 
 @dataclass
