@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ADD-001",
+    "title": "Coding a diagnosis recorded as suspected, possible or questionable",
+    "source": "WHO ICD-11 Reference Guide (2023-01), s.2.23.9 and s.2.23.5.3, https://icdcdn.who.int/icd11referenceguide/en-2023-01/html/index.html#coding-of-suspected-conditions-or-symptoms-abnormal-findings-and-nonillness-situations",
+    "effective": "2023-01",
+    "text": "Where the record states a main condition as 'suspected', 'possible' or 'questionable' and no further clarifying information is available, the suspected condition is coded as though it were established, rather than defaulted to a symptom or unresolved code. This differs from simply picking the safest fallback: only when the note offers a symptom instead of naming a suspected diagnosis at all should the symptom itself be coded."
+  },
+  {
+    "id": "ADD-002",
+    "title": "Selecting the main condition when several are documented",
+    "source": "WHO ICD-11 Reference Guide (2023-01), s.2.23.4.1, s.2.23.4.2 and s.2.23.6 (rules MB1-MB3), https://icdcdn.who.int/icd11referenceguide/en-2023-01/html/index.html#coder-guidelines-for-selecting-main-condition-and-other-conditions-for-coding-purposes",
+    "effective": "2023-01",
+    "text": "The main condition is the one condition determined to be chiefly responsible for the encounter, not simply the first or most severe finding listed. If a symptom is recorded as the main condition but the record shows it was caused by a diagnosed, treated condition, the diagnosed condition is reselected as the main condition instead of the symptom. Conversely, if a symptom is documented with two or more competing possible causes and no cause has been settled, the symptom itself is coded as the main condition rather than guessing between the candidates."
+  },
+  {
+    "id": "ADD-003",
+    "title": "Postcoordination: combining a stem code with extension codes",
+    "source": "WHO ICD-11 Reference Guide (2023-01), s.2.9 and s.2.10, https://icdcdn.who.int/icd11referenceguide/en-2023-01/html/index.html#precoordination-and-postcoordination",
+    "effective": "2023-01",
+    "text": "Where a single diagnostic entry (a 'stem code') does not capture detail the note documents — such as anatomical site, severity, or a causative organism — one or more 'extension codes' can be linked to it to add that detail, forming a 'cluster', rather than searching for a different, more specific stem code that may not exist. Extension codes are never used on their own and never replace a stem code; they only add detail to one. This should not be used to recreate a concept that already has its own combined (precoordinated) entry — if a more specific single code already exists for the exact combination, that code is used instead of building a cluster."
+  },
+  {
+    "id": "ADD-004",
+    "title": "'Unspecified' versus 'other specified' residual codes",
+    "source": "WHO ICD-11 Reference Guide (2023-01), s.2.7.5, https://icdcdn.who.int/icd11referenceguide/en-2023-01/html/index.html#residual-categories-other-and-unspecified",
+    "effective": "2023-01",
+    "text": "Two different residual categories exist and are not interchangeable. 'Unspecified' is used when the source documentation simply does not contain enough detail to select a more specific category — the information needed just isn't there. 'Other' is used in the opposite situation: the documentation is specific enough, but no matching category exists in the classification for that specific detail, so the closest broader category is used instead."
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "code": "1F41",
+    "title": "Malaria due to Plasmodium vivax",
+    "chapter": "01 Certain infectious or parasitic diseases",
+    "synonyms": ["vivax malaria", "P. vivax malaria", "benign tertian malaria"],
+    "source": "WHO ICD-11 for Mortality and Morbidity Statistics (MMS); verified via ICD-11 MMS mirror https://www.findacode.com/icd-11/code-1203794080.html (icd.who.int/browse11 is a JS app not directly fetchable)"
+  },
+  {
+    "code": "2C6Z",
+    "title": "Malignant neoplasms of breast, unspecified",
+    "chapter": "02 Neoplasms",
+    "synonyms": ["breast cancer", "carcinoma of breast", "malignant breast tumour"],
+    "source": "WHO ICD-11 MMS; verified via https://www.findacode.com/icd-11/code-1047754165/unspecified.html and https://www.findacode.com/icd-11/chapter-02.html"
+  },
+  {
+    "code": "2C77.Z",
+    "title": "Malignant neoplasms of cervix uteri, unspecified",
+    "chapter": "02 Neoplasms",
+    "synonyms": ["cervical cancer", "carcinoma of cervix", "cervix cancer"],
+    "source": "WHO ICD-11 MMS; verified via https://www.findacode.com/icd-11/code-1256072522/unspecified.html"
+  },
+  {
+    "code": "1E91",
+    "title": "Zoster",
+    "chapter": "01 Certain infectious or parasitic diseases",
+    "synonyms": ["herpes zoster", "shingles"],
+    "source": "WHO ICD-11 MMS; verified via https://www.findacode.com/icd-11/code-523481501.html"
+  },
+  {
+    "code": "1E90",
+    "title": "Varicella",
+    "chapter": "01 Certain infectious or parasitic diseases",
+    "synonyms": ["chickenpox", "varicella zoster infection"],
+    "source": "WHO ICD-11 MMS; verified via https://www.findacode.com/icd-11/code-1667539108.html"
+  },
+  {
+    "code": "RA01.0",
+    "title": "COVID-19, virus identified",
+    "chapter": "25 Codes for special purposes",
+    "synonyms": ["COVID-19 confirmed", "SARS-CoV-2 infection, confirmed"],
+    "source": "WHO Emergency use ICD codes for COVID-19 disease outbreak, https://www.who.int/standards/classifications/classification-of-diseases/emergency-use-icd-codes-for-covid-19-disease-outbreak ; cross-verified via https://www.findacode.com/icd-11/code-1790791774.html"
+  },
+  {
+    "code": "RA01.1",
+    "title": "COVID-19, virus not identified",
+    "chapter": "25 Codes for special purposes",
+    "synonyms": ["COVID-19 clinically diagnosed", "suspected COVID-19", "COVID-19 unconfirmed"],
+    "source": "WHO Emergency use ICD codes for COVID-19 disease outbreak, https://www.who.int/standards/classifications/classification-of-diseases/emergency-use-icd-codes-for-covid-19-disease-outbreak ; cross-verified via https://www.findacode.com/icd-11/code-563410356.html"
+  },
+  {
+    "code": "3A9Z",
+    "title": "Anaemias or other erythrocyte disorders, unspecified",
+    "chapter": "03 Diseases of the blood or blood-forming organs",
+    "synonyms": ["anaemia, unspecified", "anaemia NOS", "anaemia of undetermined cause"],
+    "source": "WHO ICD-11 MMS; verified via https://www.findacode.com/icd-11/block-224336967.html and https://www.findacode.com/icd-11/chapter-03.html"
+  }
+]
