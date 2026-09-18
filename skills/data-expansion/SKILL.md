@@ -51,3 +51,13 @@ originals.
 - Inventing a code or guideline snippet with no real source to patch a test
   case — this is exactly the "confidently wrong" failure mode the brief
   warns is worse than a rejected claim.
+
+## If a supplied entry looks wrong, not just missing
+
+Verifying real additions against WHO ICD-11 sources can surface a supplied
+entry that's itself mislabeled — e.g. `1E50` in `data/icd_catalog.json` is
+titled "Human immunodeficiency virus disease," but the real ICD-11 code for
+HIV disease is `1C60`–`1C62`; real `1E50` is acute viral hepatitis. Don't
+"fix" the supplied file — it's graded as given and the brief wants the
+diff legible, not a silent correction. Name it in the README instead, as
+direct evidence the supplied data isn't ground truth.

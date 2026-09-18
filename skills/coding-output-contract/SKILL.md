@@ -16,13 +16,27 @@ run. If something in the pipeline throws, catch it at the per-note boundary
 and emit an unresolved record with the error reason, then continue to the
 next note.
 
+This starts at the file parser, not just inside the pipeline. A malformed
+row in the input file (wrong JSON shape, missing `text`, a stray non-object
+entry) must not raise past `coder/cli.py`'s loader and take the whole batch
+down — it gets flagged (`NoteInput.load_error`) and turned into its own
+refusal record via `pipeline.record_for_load_error`, same as any other note.
+A whole-file problem (file doesn't exist, top-level JSON is neither an
+object nor a list) is the one case allowed to be a hard stop, since there's
+no batch to isolate anything within — but it must exit with a clean message,
+not a raw traceback.
+
 ## Required fields per record
 
 - `note_id` (or index if the input has none)
 - `codes`: list of `{code, title, confidence_contribution}` — empty list is
   valid and expected when refusing
 - `refusal`: `{refused: bool, reason: str|null}` — explicit, not inferred
-  from an empty `codes` list
+  from an empty `codes` list. `codes` and `refusal` can never disagree:
+  non-empty `codes` forces `refused=False`, and neither codes nor an
+  explicit refusal is normalized to a refusal, not left ambiguous. This is
+  enforced in code (`adjudicator._normalize`), not left to the model's JSON
+  alone — see [[agent-architecture]].
 - `evidence`: `{catalog_codes_cited: [...], guideline_ids_cited: [...]}` —
   every code/guideline that materially affected the decision, including ones
   that ruled something *out*
