@@ -11,9 +11,22 @@ from collections import Counter
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
+# A standard English function-word list — reduces noise from words that
+# carry no discriminating clinical meaning, not a diagnosis-specific
+# filter. Content words (including generic-sounding ones like "symptoms")
+# are deliberately left in; see skills/clinical-retrieval for the residual
+# noise that remains and why it's a job for the reasoning layer, not
+# retrieval, to resolve.
+_STOPWORDS = frozenset(
+    """a an and are as at be by for from has have had he in is it its of on
+    that the to was were will with no not this these those or but if than
+    then so such can could would should may might also been being do does
+    did his her their they them she we you your i""".split()
+)
+
 
 def tokenize(text: str) -> list[str]:
-    return _TOKEN_RE.findall(text.lower())
+    return [t for t in _TOKEN_RE.findall(text.lower()) if t not in _STOPWORDS]
 
 
 class TfidfIndex:
