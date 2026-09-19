@@ -4,6 +4,7 @@ shares no vocabulary with the note itself, only with the code it restricts
 — see skills/clinical-retrieval."""
 from __future__ import annotations
 
+from . import abbreviations
 from .data import load_catalog, load_guidelines
 from .schemas import CatalogEntry, GuidelineEntry, RetrievedCode, RetrievedGuideline
 from .tfidf import TfidfIndex
@@ -27,7 +28,7 @@ class Retriever:
         )
 
     def candidate_codes(self, note_text: str, top_k: int = 6) -> list[RetrievedCode]:
-        hits = self._code_index.query(note_text, top_k)
+        hits = self._code_index.query(abbreviations.expand(note_text), top_k)
         return [
             RetrievedCode(entry=self.catalog[i], score=score)
             for i, score in hits
@@ -49,7 +50,7 @@ class Retriever:
             if current is None or score > current.score:
                 best[g.id] = RetrievedGuideline(entry=g, score=score)
 
-        for idx, score in self._guideline_index.query(note_text, top_k_note):
+        for idx, score in self._guideline_index.query(abbreviations.expand(note_text), top_k_note):
             consider(idx, score)
 
         for code in codes:
