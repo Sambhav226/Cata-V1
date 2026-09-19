@@ -5,17 +5,33 @@ with cited evidence.
 
 ## Running it
 
+**With Docker:**
+
 ```
 docker compose up            # smoke run over the bundled sample notes
 ./run.sh <input-path> [output-path]   # real run against an arbitrary file
 ```
 
 `run.sh` mounts your host file into the container and passes it as `--input`
-— nothing about the input path is baked into the image. Input can be
-`.jsonl` (one `{"note_id", "text"}` object per line — recommended), `.json`
-(a list of such objects), or `.txt` (one note, or several separated by a
-line containing only `-----`). Output is JSONL, one record per note, in
-input order.
+— nothing about the input path is baked into the image.
+
+**Without Docker** (verified from a clean virtualenv, no other setup):
+
+```
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m coder.cli --input <input-path> --output <output-path>
+```
+
+Both paths run the identical code — `run.sh`/`docker compose` is just a
+thin wrapper around this same `python -m coder.cli` invocation inside the
+container. If Docker isn't cooperating for any reason, this is not a
+degraded fallback, it's the same system.
+
+Input can be `.jsonl` (one `{"note_id", "text"}` object per line —
+recommended), `.json` (a list of such objects), or `.txt` (one note, or
+several separated by a line containing only `-----`). Output is JSONL, one
+record per note, in input order.
 
 Without a model key set, the pipeline still runs end to end — see
 "No-key path" below. Two providers are supported — `ANTHROPIC_API_KEY`
@@ -23,9 +39,7 @@ Without a model key set, the pipeline still runs end to end — see
 extra dependency); Anthropic wins if both are set. `coder/llm.py` is the
 only place that knows which; every agent just asks it for a completion.
 
-Without Docker: `pip install -r requirements.txt && python -m coder.cli
---input <path> --output <path>`. Tests: `python -m unittest discover -s
-tests`.
+Tests: `python -m unittest discover -s tests`.
 
 ## Architecture
 
