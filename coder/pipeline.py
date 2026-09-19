@@ -27,7 +27,18 @@ class Pipeline:
     def _process(self, note: NoteInput) -> CodingRecord:
         picture = extractor.extract(note.text)
 
-        codes = self.retriever.candidate_codes(note.text, top_k=MAX_CANDIDATES)
+        # Widen the retrieval query with the extractor's differential terms
+        # when available (real model only — the no-key fallback never
+        # populates this). Plain lexical retrieval on the note text alone
+        # can score zero for a code that shares no vocabulary with the note
+        # at all (e.g. "worst headache of my life" vs. "subarachnoid
+        # haemorrhage") even though the catalogue entry exists — see
+        # skills/clinical-retrieval.
+        retrieval_query = note.text
+        if picture.differential_terms:
+            retrieval_query = f"{note.text} {' '.join(picture.differential_terms)}"
+
+        codes = self.retriever.candidate_codes(retrieval_query, top_k=MAX_CANDIDATES)
         if not codes:
             return CodingRecord(
                 note_id=note.note_id,
@@ -45,7 +56,7 @@ class Pipeline:
                 unresolved=["no plausible ICD-11 code found in the catalogue for this note"],
             )
 
-        guidelines = self.retriever.candidate_guidelines(note.text, codes)
+        guidelines = self.retriever.candidate_guidelines(retrieval_query, codes)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(codes) + 1) as pool:
             verdict_futures = [pool.submit(candidate.evaluate, picture, c, guidelines) for c in codes]

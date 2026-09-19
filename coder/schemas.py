@@ -56,6 +56,7 @@ class ClinicalPicture:
     stated_diagnosis: Optional[str]
     notable_absences: list[str]
     raw_note: str
+    differential_terms: list[str] = field(default_factory=list)
 
 
 @dataclass

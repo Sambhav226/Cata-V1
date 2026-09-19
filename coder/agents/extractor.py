@@ -18,7 +18,16 @@ actually stated), duration_or_onset (string or null), stated_diagnosis \
 (string or null, only if the clinician wrote one explicitly), \
 notable_absences (array of strings — clinically relevant information a \
 coder would want that this note does not provide, e.g. no organism named, \
-no duration given)."""
+no duration given), differential_terms (array of short clinical search \
+terms — named conditions this pattern of findings could plausibly point to, \
+including a dangerous possibility worth ruling out even if the note's own \
+wording never names it, e.g. a symptom cluster consistent with heart \
+failure, or a headache described in a way that raises subarachnoid \
+haemorrhage as a possibility. These are search terms to widen what gets \
+retrieved next, not a diagnosis — you are not deciding anything here, and \
+a downstream reviewer independently judges each one against the evidence. \
+Only include terms a clinician would genuinely consider from this picture; \
+do not pad the list.)."""
 
 
 def extract(note_text: str) -> ClinicalPicture:
@@ -33,6 +42,7 @@ def extract(note_text: str) -> ClinicalPicture:
             stated_diagnosis=result.get("stated_diagnosis"),
             notable_absences=list(result.get("notable_absences") or []),
             raw_note=note_text,
+            differential_terms=list(result.get("differential_terms") or []),
         )
     except Exception:
         return _fallback(note_text)
