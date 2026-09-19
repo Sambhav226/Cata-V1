@@ -13,7 +13,10 @@ docker compose up            # smoke run over the bundled sample notes
 ```
 
 `run.sh` mounts your host file into the container and passes it as `--input`
-— nothing about the input path is baked into the image.
+— nothing about the input path is baked into the image. Verified for real:
+clean `docker compose build`, then `./run.sh tests/fixtures/hard_notes.jsonl
+<out>` against the harder note set below, output identical to running the
+same file straight through Python.
 
 **Without Docker** (verified from a clean virtualenv, no other setup):
 
