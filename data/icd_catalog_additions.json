@@ -38,14 +38,14 @@
     "code": "RA01.0",
     "title": "COVID-19, virus identified",
     "chapter": "25 Codes for special purposes",
-    "synonyms": ["COVID-19 confirmed", "SARS-CoV-2 infection, confirmed"],
+    "synonyms": ["COVID-19 confirmed", "SARS-CoV-2 infection, confirmed", "coronavirus disease", "loss of smell", "anosmia", "loss of taste"],
     "source": "WHO Emergency use ICD codes for COVID-19 disease outbreak, https://www.who.int/standards/classifications/classification-of-diseases/emergency-use-icd-codes-for-covid-19-disease-outbreak ; cross-verified via https://www.findacode.com/icd-11/code-1790791774.html"
   },
   {
     "code": "RA01.1",
     "title": "COVID-19, virus not identified",
     "chapter": "25 Codes for special purposes",
-    "synonyms": ["COVID-19 clinically diagnosed", "suspected COVID-19", "COVID-19 unconfirmed"],
+    "synonyms": ["COVID-19 clinically diagnosed", "suspected COVID-19", "COVID-19 unconfirmed", "coronavirus disease", "loss of smell", "anosmia", "loss of taste"],
     "source": "WHO Emergency use ICD codes for COVID-19 disease outbreak, https://www.who.int/standards/classifications/classification-of-diseases/emergency-use-icd-codes-for-covid-19-disease-outbreak ; cross-verified via https://www.findacode.com/icd-11/code-563410356.html"
   },
   {
