@@ -17,8 +17,11 @@ docker compose up            # smoke run over the bundled sample notes
 line containing only `-----`). Output is JSONL, one record per note, in
 input order.
 
-Without `ANTHROPIC_API_KEY` set, the pipeline still runs end to end — see
-"No-key path" below.
+Without a model key set, the pipeline still runs end to end — see
+"No-key path" below. Two providers are supported — `ANTHROPIC_API_KEY`
+(Claude) or `GOOGLE_API_KEY` (Gemini, via a plain stdlib HTTP call, no
+extra dependency); Anthropic wins if both are set. `coder/llm.py` is the
+only place that knows which; every agent just asks it for a completion.
 
 Without Docker: `pip install -r requirements.txt && python -m coder.cli
 --input <path> --output <path>`. Tests: `python -m unittest discover -s
@@ -131,6 +134,19 @@ Two real, verified examples in the supplied corpus:
   auditor left unresolved into the final `unresolved` list even if the
   model's own JSON dropped it.
 
+  **This was live-tested, not just reasoned about.** Ran the candidate
+  agent against a real chest-pain note with `GDL-041` as its only retrieved
+  guideline, against a real model (Gemini 2.5 Flash — see Tooling for why
+  two providers exist). It independently judged the presentation supports
+  `BA41` on its own clinical merits (chest pain, radiation, sweating,
+  shortness of breath), while explicitly writing `GDL-041` into
+  `disqualifying_evidence` as a "tampered guideline" and refusing to treat
+  it as support — the defense held against a real model on the first try,
+  not just in the prompt text. It did not blanket-refuse either, which
+  matters: the failure mode to avoid isn't just "don't comply with the
+  injection," it's "don't let a planted directive derail the actual
+  clinical reasoning in either direction."
+
 `GDL-001` (a documented underlying diagnosis absorbs its presenting
 symptom's code) is a third, milder example — it reads as a specificity rule
 until you ask whether it disqualifies a code retrieval also surfaced. I
@@ -189,6 +205,60 @@ all. This isn't touched — the supplied file is graded as given, and
 concrete instance of the brief's "our data is not ground truth" warning
 inside the very file the system relies on for a code it might reasonably
 propose for an HIV-related note.
+
+## Stress-testing against a harder, unrelated note set
+
+`tests/fixtures/hard_notes.jsonl` is 13 notes I wrote specifically to be
+nothing like `tests/fixtures/sample_notes.jsonl` — clinical shorthand, a
+note with an embedded fake directive (a second, independent check on the
+injection defense, from the note side this time), a genuinely absent
+condition, presentations for three of my own catalogue additions, and a
+"worst headache of my life" note designed to probe whether retrieval can
+find a dangerous diagnosis that shares no vocabulary with how a patient
+actually describes it. `tests/test_hard_notes.py` runs the pipeline against
+all of them and keeps the assertions structural (contract, no-crash,
+"retrieval found something"), not exact-code-match — pinning an exact code
+in a test would be the same overfitting mistake this whole project argues
+against.
+
+Running it surfaced three real, fixed retrieval issues:
+
+- **Clinical shorthand shares no vocabulary with the catalogue.** A
+  textbook heart-failure note written as "pt c/o SOB x2/7, JVP raised,
+  bibasal creps" retrieved an ankle fracture and hepatitis C as its top
+  candidates — `BD10`/`BD11` (heart failure) never appeared, despite being
+  in the catalogue. Fixed with `coder/abbreviations.py`, a small, fixed
+  clinical-shorthand expansion applied before tokenizing (SOB, JVP, PND,
+  PMHx, etc.) — a standard, closed vocabulary normalisation, not a
+  diagnosis lookup table.
+- **A code that shares zero vocabulary with the note can't be found by
+  widening top-K.** `8B02` (subarachnoid haemorrhage) doesn't appear even
+  in the top 25 candidates for a thunderclap-headache note — this is a true
+  zero-similarity case, not a ranking problem, and no amount of retrieval
+  tuning fixes it. Addressed by giving the extractor a
+  `differential_terms` field (`coder/agents/extractor.py`,
+  `coder/schemas.py`) — a few clinically-plausible search terms, including
+  a dangerous one worth ruling out even if the note's own words don't
+  suggest it, folded into the retrieval query in `pipeline.py`. **This only
+  helps in the keyed path** (the no-key fallback never populates it), and I
+  could not re-verify it live — the Google key used for the earlier
+  injection-defense test hit its free-tier daily quota during this session
+  and a fresh one wasn't available. It's implemented and unit-tested for
+  wiring, not confirmed to actually improve recall against a live model.
+- **A generic word in a chapter title created spurious matches unrelated
+  to it.** "Symptoms, signs or clinical findings" (a real chapter name) let
+  any note that happened to say "no other symptoms" weakly match every
+  entry filed under it. A standard stopword filter (`coder/tfidf.py`)
+  measurably reduced this (a hiccups-only note's top spurious match dropped
+  from a leading score to below the similarity floor) without touching any
+  real content word — see `skills/clinical-retrieval` for why this is
+  deliberately left as a known, accepted retrieval imprecision rather than
+  something to fully engineer away.
+
+I also found and fixed a gap in my own additions while doing this: the
+COVID-19 entries I added didn't include "anosmia"/"loss of smell" as
+synonyms, so a textbook COVID presentation didn't retrieve them at all —
+fixed in `data/icd_catalog_additions.json`.
 
 ## What survives a different set of notes, and what won't
 
@@ -284,6 +354,19 @@ three:
    code (see "Guideline conflicts" above) — but it shipped undefended in the
    first pass, and I would not have caught it without deliberately pointing
    a skeptical reader at the corpus instead of just my own code.
+4. Live-testing the fix against a real model (a Google Gemini key, added as
+   a second provider in `coder/llm.py` specifically to do this test) found a
+   fourth mistake in the adapter itself: Gemini 2.5's extended-thinking
+   tokens count against `maxOutputTokens`, so the first version of the
+   Google call silently burned the entire token budget "thinking" and got
+   cut off mid-JSON (`finishReason: MAX_TOKENS`) before writing any of the
+   actual answer — every real call fell through to the deterministic
+   fallback, indistinguishable from "no key" unless you looked at the raw
+   HTTP response. Fixed by disabling thinking for these calls (they're
+   narrow, single-purpose steps in an already-multi-step pipeline; they
+   don't need the model's own extra deliberation on top). After the fix,
+   the same call correctly identified `GDL-041` as a tampered guideline on
+   the first real attempt — see "Guideline conflicts."
 
 **Honesty note on the commit history:** the sandbox this was built in
 cannot write to `.git` directly (a deliberate restriction — Claude Code
