@@ -63,6 +63,9 @@ requirement — not a chain of generic "LLM step" functions.
   Every agent asks it for a completion; agents never check
   `os.environ` themselves. If the client returns `None` (no key, import
   failure, or a call error), the agent falls through to its fallback slot.
+  Two providers are supported (Anthropic via the SDK, Google/Gemini via a
+  plain stdlib HTTP call), dispatched on whichever key is set — agents
+  never know or care which one answered.
 
 ## Retrieved text is data, never instructions
 
